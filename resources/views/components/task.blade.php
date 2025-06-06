@@ -8,11 +8,11 @@
 <div wire:key="{{ $task->id }}">
     @if ($expandable)
         <div class="p-2 not-last:border-b not-last:border-b-gray-200 dark:not-last:border-b-zinc-800 hover:bg-gray-100 dark:hover:bg-zinc-600 cursor-pointer last:rounded-b-lg first:rounded-t-lg transition"
-             x-data="{ task_{{ $task->id }}_open: false }"
-             x-on:click="task_{{ $task->id }}_open = ! task_{{ $task->id }}_open"
+             x-data="{ open: false }"
+             x-on:click="open = ! open"
         >
-            <flux:icon.chevron-down class="inline text-gray-600 dark:text-zinc-400 size-5" x-show="!task_{{ $task->id }}_open" />
-            <flux:icon.chevron-up class="inline text-gray-600 dark:text-zinc-400 size-5" x-show="task_{{ $task->id }}_open" x-cloak />
+            <flux:icon.chevron-down class="inline text-gray-600 dark:text-zinc-400 size-5" x-show="!open" />
+            <flux:icon.chevron-up class="inline text-gray-600 dark:text-zinc-400 size-5" x-show="open" x-cloak />
 
             @if ($task->completed)
                 <span class="text-gray-600 dark:text-zinc-400 line-through">
@@ -30,24 +30,32 @@
                 <flux:checkbox @click.stop="$wire.setCompleted({{ $task->id }}, $el.checked)" class="float-right top-0.5 relative" />
             @endif
 
-            <div class="md:grid md:grid-cols-2 text-sm mt-2 space-y-3 text-gray-600 dark:text-zinc-300" x-cloak x-show="task_{{ $task->id }}_open" x-collapse>
-                <div>
-                    <div class="text-white text-base">
-                        {{ __("Description") }}
+            <div class="md:grid md:grid-cols-2 text-sm mt-2 space-y-3 text-gray-600 dark:text-zinc-300" x-cloak x-show="open" x-collapse>
+                @if(!empty($task->description))
+                    <div>
+                        <div class="text-white text-base">
+                            {{ __("Description") }}
+                        </div>
+                        {{ $task->description }}
                     </div>
-                    {{ $task->description }}
-                </div>
-                <div>
-                    <div class="text-white text-base">
-                        {{ __("Start Date") }}
-                    </div>
-                    {{ $task->start_date }}
+                @endif
+                @if($task->start_date || $task->end_date)
+                    <div>
+                        @if($task->start_date)
+                            <div class="text-white text-base">
+                                {{ __("Start Date") }}
+                            </div>
+                            {{ $task->start_date }}
+                        @endif
 
-                    <div class="text-white text-base mt-3">
-                        {{ __("End Date") }}
+                        @if($task->end_date)
+                            <div class="text-white text-base mt-3">
+                                {{ __("End Date") }}
+                            </div>
+                            {{ $task->end_date }}
+                        @endif
                     </div>
-                    {{ $task->end_date }}
-                </div>
+                @endif
             </div>
         </div>
     @else
